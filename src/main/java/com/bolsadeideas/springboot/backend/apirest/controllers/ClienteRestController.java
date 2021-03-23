@@ -74,7 +74,7 @@ public class ClienteRestController {
 					.stream()
 					.map(err -> "El campo '" + err.getField()+ "' " + err.getDefaultMessage())
 					.collect(Collectors.toList());
-			response.put("mensaje", errors);
+			response.put("errors", errors);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
 		}
 
@@ -107,7 +107,7 @@ public class ClienteRestController {
 					.stream()
 					.map(err -> "El campo '" + err.getField()+ "' " + err.getDefaultMessage())
 					.collect(Collectors.toList());
-			response.put("mensaje", errors);
+			response.put("errors", errors);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
 		}
 

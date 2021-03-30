@@ -216,7 +216,7 @@ public class ClienteRestController {
 			
 			clienteService.save(cliente);
 			
-			response.put("Cliente", cliente);
+			response.put("cliente", cliente);
 			response.put("mensaje", "Has subido al imagen con exito! " + nombreArchivo);
 		}
 		
@@ -237,7 +237,13 @@ public class ClienteRestController {
 		}
 		
 		if(!recurso.exists() && !recurso.isReadable()) {
-			throw new RuntimeException("Error no se pufo cargar la imagen: " + nombreFoto);
+			rutaArchivo = Paths.get("src/main/resources/static/images").resolve("no-usuario.png").toAbsolutePath();
+			try {
+				recurso = new UrlResource(rutaArchivo.toUri());
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+			log.error("Error no se pufo cargar la imagen: " + nombreFoto);
 		}
 		HttpHeaders cabecera = new HttpHeaders();
 		cabecera.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"");

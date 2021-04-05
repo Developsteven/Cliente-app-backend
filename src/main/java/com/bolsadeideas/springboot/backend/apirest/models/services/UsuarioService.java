@@ -12,11 +12,13 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bolsadeideas.springboot.backend.apirest.models.dao.IUsuarioDao;
 import com.bolsadeideas.springboot.backend.apirest.models.entity.Usuario;
 
+@Service
 public class UsuarioService implements UserDetailsService{
 
 	private Logger logger = LoggerFactory.getLogger(UsuarioService.class);

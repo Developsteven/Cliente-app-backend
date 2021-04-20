@@ -1,5 +1,6 @@
 package com.bolsadeideas.springboot.backend.apirest.models.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -14,7 +15,7 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="productos")
-public class Producto {
+public class Producto implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,4 +66,5 @@ public class Producto {
 	}
 	
 	
+	private static final long serialVersionUID = 1L;
 }

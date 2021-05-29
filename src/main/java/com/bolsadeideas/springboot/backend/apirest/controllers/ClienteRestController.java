@@ -3,6 +3,7 @@ package com.bolsadeideas.springboot.backend.apirest.controllers;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,10 +34,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bolsadeideas.springboot.backend.apirest.models.dao.IUsuarioDao;
 import com.bolsadeideas.springboot.backend.apirest.models.entity.Cliente;
 import com.bolsadeideas.springboot.backend.apirest.models.entity.Region;
+import com.bolsadeideas.springboot.backend.apirest.models.entity.Role;
+import com.bolsadeideas.springboot.backend.apirest.models.entity.Usuario;
 import com.bolsadeideas.springboot.backend.apirest.models.services.IClienteService;
 import com.bolsadeideas.springboot.backend.apirest.models.services.IUploadFileService;
+import com.bolsadeideas.springboot.backend.apirest.models.services.IUsuarioService;
 
 @CrossOrigin(origins = { "http://localhost:4200" })
 @RestController
@@ -47,6 +53,13 @@ public class ClienteRestController {
 	
 	@Autowired
 	private IUploadFileService uploadService;
+	
+	
+	@Autowired
+	private IUsuarioDao usuarioDao;
+	
+	@Autowired
+	private  BCryptPasswordEncoder passwordEncoder;
 	
 
 	@GetMapping("/clientes")
@@ -238,4 +251,52 @@ public class ClienteRestController {
 		return clienteService.findAllRegiones();
 	}
 	
+	
+	@PostMapping("/registrar")
+	public ResponseEntity<?> guardar(@Valid @RequestBody Usuario usuario, BindingResult result) {
+
+		Usuario usuarioNew = null;
+		Map<String, Object> response = new HashMap<>();
+		
+		if(result.hasErrors()) {
+			List<String> errors = result.getFieldErrors()
+					.stream()
+					.map(err -> "El campo '" + err.getField()+ "' " + err.getDefaultMessage())
+					.collect(Collectors.toList());
+			response.put("errors", errors);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+		}
+
+		try {
+			Role rol = new Role();		
+			
+			rol.setId((long) 1);
+			rol.setNombre("ROLE_USER");	
+			
+			List<Role> listaroles = new ArrayList<>() ;
+			listaroles.add(rol);
+			
+//			if(usuario.getRoles().contains("ROLE_ADMIN"))
+//				rol.setId((long) 2);
+//				rol.setNombre("ROLE_ADMIN");	
+//				listaroles.add(rol);
+//			
+			usuario.setRoles(listaroles);
+			usuario.setEnabled(true);
+			usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+			
+			usuarioNew = usuarioDao.save(usuario);
+
+		} catch (DataAccessException e) {
+			response.put("mensaje", "Error al realizar el insert en la base de datos");
+			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		response.put("mensaje", "El usuario ha sido creado con exito!");
+		response.put("cliente", usuarioNew);
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+	}
 }
+
+

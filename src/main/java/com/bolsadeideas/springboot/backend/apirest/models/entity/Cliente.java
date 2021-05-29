@@ -70,11 +70,11 @@ public class Cliente implements Serializable {
 //		createAt = new Date();
 //	}
 
-
 	public Cliente() {
 		this.facturas = new ArrayList<>();
 	}
 
+	
 	public long getId() {
 		return id;
 	}

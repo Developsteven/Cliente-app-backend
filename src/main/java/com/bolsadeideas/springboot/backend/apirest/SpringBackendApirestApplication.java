@@ -19,7 +19,7 @@ public class SpringBackendApirestApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		String password = "12345";
+		String password = "222333";
 		
 		for (int i = 0; i < 4; i++) {
 			String passwordBcrypt = passwordEncoder.encode(password);

@@ -5,4 +5,6 @@ import com.bolsadeideas.springboot.backend.apirest.models.entity.Usuario;
 public interface IUsuarioService {
 	
 	public Usuario findByUsername(String username);
+	
+	public Usuario create(Usuario usuario);
 }
